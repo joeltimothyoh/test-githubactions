@@ -1,0 +1,65 @@
+name: test-githubactions
+
+on:
+  push:
+    branches:
+    - '*'
+    tags:
+    - '*'
+  pull_request:
+    branches:
+    - '*'
+
+jobs:
+  build:
+    name: ${{ matrix.os }} [${{matrix.type}}]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macOS-latest]
+        type: [first, second]
+    env:
+      job_var1: value1
+      job_var2: value2
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        submodules: true
+    - name: Say hello
+      shell: bash
+      run: echo hello
+    - name: Echo job variables
+      shell: bash
+      run: |
+        echo $job_var1
+        echo $job_var2
+    - name: Display system info (windows)
+      if: startsWith(matrix.os, 'windows')
+      shell: pwsh
+      run: |
+        hostname
+        whoami
+        systeminfo
+        Get-PSDrive
+        Get-Location
+    - name: Display system info (ubuntu)
+      if: startsWith(matrix.os, 'ubuntu')
+      shell: bash
+      run: |
+        hostname
+        whoami
+        cat /etc/*release
+        lscpu
+        free
+        df -h
+        pwd
+    - name: Display system info (macOS)
+      if: startsWith(matrix.os, 'macOS')
+      shell: pwsh
+      run: |
+        hostname
+        whoami
+        system_profiler -detailLevel mini
+        top -l 1 -s 0 | grep PhysMem
+        df -h
+        pwd
