@@ -75,10 +75,16 @@ jobs:
       run: |
         $PSVersionTable
   build_container:
+    name: ${{ matrix.os }} [container] ${{ matrix.containerImage }}
     runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        containerImage:
+        - joeltimothyoh/powershell:6.2.0-ubuntu-18.04-git-sudo
+        - joeltimothyoh/powershell:6.1.0-ubuntu-18.04-git-sudo
     needs: []
     container:
-      image: joeltimothyoh/powershell:6.2.0-ubuntu-18.04-git-sudo
+      image: ${{ matrix.containerImage }}
       env:
         dockervar1: value1
         dockervar2: value2
@@ -86,5 +92,5 @@ jobs:
     - name: Echo container variables
       shell: bash
       run: |
-        echo $job_var1
-        echo $job_var2
+        echo $dockervar1
+        echo $dockervar1
