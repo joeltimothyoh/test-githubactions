@@ -12,7 +12,7 @@ on:
 
 jobs:
   build:
-    name: ${{ matrix.os }} [${{matrix.type}}]
+    name: ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -62,8 +62,12 @@ jobs:
         top -l 1 -s 0 | grep PhysMem
         df -h
         pwd
-    - name: Get powershell version
-      if: startsWith(matrix.os, 'macOS')
+    - name: Get powershell version (pwsh)
       shell: pwsh
+      run: |
+        $PSVersionTable
+    - name: Get powershell version (powershell)
+      if: startsWith(matrix.os, 'windows')
+      shell: powershell
       run: |
         $PSVersionTable
