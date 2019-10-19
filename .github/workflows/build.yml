@@ -32,6 +32,9 @@ jobs:
       run: |
         echo $job_var1
         echo $job_var2
+    - name: Print environment variables
+      run: |
+        env
     - name: Display system info (windows)
       if: startsWith(matrix.os, 'windows')
       shell: pwsh
