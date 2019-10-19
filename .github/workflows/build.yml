@@ -94,3 +94,14 @@ jobs:
       run: |
         echo $dockervar1
         echo $dockervar1
+    - name: Display system info (ubuntu)
+      if: startsWith(matrix.os, 'ubuntu')
+      shell: bash
+      run: |
+        hostname
+        whoami
+        cat /etc/*release
+        lscpu
+        free
+        df -h
+        pwd
