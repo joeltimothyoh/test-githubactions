@@ -119,7 +119,7 @@ jobs:
         df -h
         pwd
     - name: Check for elevation
-      if: ${{ matrix.containerImage }} != ''
+      if: matrix.containerImage != ''
       shell: bash
       run: |
         set -eux
