@@ -66,7 +66,7 @@ jobs:
       shell: bash
       run: |
         set -eux
-        sudo -i -u root whoami
+        sudo -u root whoami
         sudo apt-get update
         sudo touch /usr/local/hi
     - name: Display system info (macOS)
@@ -123,6 +123,6 @@ jobs:
       shell: bash
       run: |
         set -eux
-        sudo -i -u root whoami
+        sudo -u root whoami
         sudo apt-get update
         sudo touch /usr/local/hi
