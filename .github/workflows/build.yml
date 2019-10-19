@@ -84,7 +84,6 @@ jobs:
         dockervar2: value2
     steps:
     - name: Echo container variables
-      if: job.
       shell: bash
       run: |
         echo $job_var1
