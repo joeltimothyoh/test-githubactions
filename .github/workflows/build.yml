@@ -62,3 +62,8 @@ jobs:
         top -l 1 -s 0 | grep PhysMem
         df -h
         pwd
+    - name: Get powershell version
+      if: startsWith(matrix.os, 'macOS')
+      shell: pwsh
+      run: |
+        $PSVersionTable
