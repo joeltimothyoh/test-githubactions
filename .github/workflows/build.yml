@@ -74,3 +74,18 @@ jobs:
       shell: powershell
       run: |
         $PSVersionTable
+  build_container:
+    runs-on: ubuntu-18.04
+    needs: []
+    container:
+      image: joeltimothyoh/powershell:6.2.0-ubuntu-18.04-git-sudo
+      env:
+        dockervar1: value1
+        dockervar2: value2
+    steps:
+    - name: Echo container variables
+      if: job.
+      shell: bash
+      run: |
+        echo $job_var1
+        echo $job_var2
