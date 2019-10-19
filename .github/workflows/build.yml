@@ -44,6 +44,12 @@ jobs:
         systeminfo
         Get-PSDrive
         Get-Location
+    - name: Check for elevation
+      if: startsWith(matrix.os, 'windows')
+      shell: pwsh
+      run: |
+        $elevated = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+        "Elevated: $elevated"
     - name: Display system info (ubuntu)
       if: startsWith(matrix.os, 'ubuntu')
       shell: bash
@@ -55,6 +61,14 @@ jobs:
         free
         df -h
         pwd
+    - name: Check for elevation
+      if: startsWith(matrix.os, 'ubuntu')
+      shell: bash
+      run: |
+        set -eux
+        sudo -i -u root whoami
+        sudo apt-get update
+        sudo touch /usr/local/hi
     - name: Display system info (macOS)
       if: startsWith(matrix.os, 'macOS')
       shell: pwsh
@@ -104,3 +118,11 @@ jobs:
         free
         df -h
         pwd
+    - name: Check for elevation
+      if: ${{ matrix.containerImage }} != ''
+      shell: bash
+      run: |
+        set -eux
+        sudo -i -u root whoami
+        sudo apt-get update
+        sudo touch /usr/local/hi
