@@ -94,8 +94,7 @@ jobs:
       run: |
         echo $dockervar1
         echo $dockervar1
-    - name: Display system info (ubuntu)
-      if: startsWith(matrix.os, 'ubuntu')
+    - name: Display system info
       shell: bash
       run: |
         hostname
