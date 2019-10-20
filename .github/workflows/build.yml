@@ -11,8 +11,10 @@ on:
     - '*'
 
 jobs:
-  build:
+
+  windows:
     name: ${{ matrix.os }}
+    needs: []
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -24,14 +26,6 @@ jobs:
     - uses: actions/checkout@v1
       with:
         submodules: true
-    - name: Say hello
-      shell: bash
-      run: echo hello
-    - name: Echo job variables
-      shell: bash
-      run: |
-        echo $job_var1
-        echo $job_var2
     - name: Print environment variables
       run: |
         env
@@ -50,6 +44,30 @@ jobs:
       run: |
         $elevated = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
         "Elevated: $elevated"
+    - name: Get powershell version (pwsh)
+      shell: pwsh
+      run: |
+        $PSVersionTable
+    - name: Get powershell version (powershell)
+      if: startsWith(matrix.os, 'windows')
+      shell: powershell
+      run: |
+        $PSVersionTable
+
+  linux:
+    name: ${{ matrix.os }}
+    needs: []
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-18.04, ubuntu-16.04]
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        submodules: true
+    - name: Print environment variables
+      run: |
+        env
     - name: Display system info (ubuntu)
       if: startsWith(matrix.os, 'ubuntu')
       shell: bash
@@ -69,40 +87,28 @@ jobs:
         sudo -u root whoami
         sudo apt-get update
         sudo touch /usr/local/hi
-    - name: Display system info (macOS)
-      if: startsWith(matrix.os, 'macOS')
-      shell: pwsh
-      run: |
-        hostname
-        whoami
-        system_profiler -detailLevel mini
-        top -l 1 -s 0 | grep PhysMem
-        df -h
-        pwd
-    - name: Get powershell version (pwsh)
-      shell: pwsh
-      run: |
-        $PSVersionTable
-    - name: Get powershell version (powershell)
-      if: startsWith(matrix.os, 'windows')
-      shell: powershell
-      run: |
-        $PSVersionTable
-  build_container:
+
+  linux_container:
     name: ${{ matrix.os }} [container] ${{ matrix.containerImage }}
+    needs: []
     runs-on: ubuntu-18.04
     strategy:
       matrix:
         containerImage:
         - joeltimothyoh/powershell:6.2.0-ubuntu-18.04-git-sudo
         - joeltimothyoh/powershell:6.1.0-ubuntu-18.04-git-sudo
-    needs: []
     container:
       image: ${{ matrix.containerImage }}
       env:
         dockervar1: value1
         dockervar2: value2
     steps:
+    - uses: actions/checkout@v1
+      with:
+        submodules: true
+    - name: Print environment variables
+      run: |
+        env
     - name: Echo container variables
       shell: bash
       run: |
@@ -126,3 +132,31 @@ jobs:
         sudo -u root whoami
         sudo apt-get update
         sudo touch /usr/local/hi
+
+  macos:
+    name: ${{ matrix.os }}
+    needs: []
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macOS-10.14]
+    env:
+      job_var1: value1
+      job_var2: value2
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        submodules: true
+    - name: Print environment variables
+      run: |
+        env
+    - name: Display system info (macOS)
+      if: startsWith(matrix.os, 'macOS')
+      shell: pwsh
+      run: |
+        hostname
+        whoami
+        system_profiler -detailLevel mini
+        top -l 1 -s 0 | grep PhysMem
+        df -h
+        pwd
