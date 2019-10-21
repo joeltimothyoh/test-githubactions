@@ -160,3 +160,15 @@ jobs:
         top -l 1 -s 0 | grep PhysMem
         df -h
         pwd
+
+  actions:
+    needs: []
+    runs-on: ubuntu-16.04
+    steps:
+    - name: action-test1
+      id: action-test1
+      uses: joeltimothyoh/action-test@
+      with:
+        your-first-name: j
+        your-middle-name: t
+        your-last-name: o
