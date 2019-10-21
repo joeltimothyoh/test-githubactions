@@ -25,4 +25,4 @@ jobs:
         your-last-name: o
     - name: Get easter egg
       run: |
-        echo "${{ steps.test1.outputs.easter-egg }}"
+        echo ${{ steps.test1.outputs.easter-egg }}
