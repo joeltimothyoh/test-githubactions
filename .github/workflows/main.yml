@@ -16,8 +16,9 @@ jobs:
     runs-on: ubuntu-18.04
     strategy:
       matrix:
-        BASE_IMAGE_REPOSITORY: [alpine]
+        BASE_IMAGE_REPO: [alpine]
         BASE_IMAGE_TAG: [3.8, 3.9]
+        BUILD_IMAGE_VARIANT: [curl, curl-iptables]
     steps:
     - uses: actions/checkout@v1
     - name: Display system info (ubuntu)
@@ -38,14 +39,26 @@ jobs:
         DOCKERHUB_REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_REGISTRY_PASSWORD }}
     - name: Build image
       run: |
-        echo "BASE_IMAGE_REPOSITORY: $BASE_IMAGE_REPOSITORY"
+        echo "BASE_IMAGE_REPO: $BASE_IMAGE_REPO"
         echo "BASE_IMAGE_TAG: $BASE_IMAGE_TAG"
-        BASE_IMAGE="${BASE_IMAGE_REPOSITORY}:${BASE_IMAGE_TAG}"
         echo "BASE_IMAGE: $BASE_IMAGE"
-        docker pull "$BASE_IMAGE"
+        echo "BUILD_IMAGE_REPO: $BUILD_IMAGE_REPO"
+        echo "BUILD_IMAGE_VARIANT: $BUILD_IMAGE_VARIANT"
+        echo "BUILD_IMAGE: $BASE_IMAGE"
+        docker pull "$BUILD_IMAGE" || true
+        docker build \
+          -t "$BUILD_IMAGE" \
+          --cache-from "$BUILD_IMAGE" \
+          --build-arg BASE_IMAGE="${BASE_IMAGE}" \
+          "$BUILD_CONTEXT"
       env:
-        BASE_IMAGE_REPOSITORY: ${{ matrix.BASE_IMAGE_REPOSITORY }}
+        BASE_IMAGE_REPO: ${{ matrix.BASE_IMAGE_REPO }}
         BASE_IMAGE_TAG: ${{ matrix.BASE_IMAGE_TAG }}
+        BASE_IMAGE: ${{ matrix.BASE_IMAGE_REPO }}/${{ matrix.BASE_IMAGE_TAG }}
+        BUILD_IMAGE_REPO: myexampleuser/example1
+        BUILD_IMAGE_VARIANT: ${{ matrix.BUILD_IMAGE_VARIANT }}
+        BUILD_IMAGE: ${{ matrix.BUILD_IMAGE_REPO }}/${{ matrix.BUILD_IMAGE_VARIANT }}
+        BUILD_CONTEXT: variants/${{ matrix.BUILD_IMAGE_VARIANT }}
     - name: List images
       run: docker images
     - name: Clean-up
