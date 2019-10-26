@@ -76,6 +76,7 @@ jobs:
         BUILD_IMAGE_REPO: myexampleuser/example1
         BUILD_IMAGE_VARIANT: ${{ matrix.BUILD_IMAGE_VARIANT }}
         BUILD_CONTEXT: variants/${{ matrix.BUILD_IMAGE_VARIANT }}
+        DEFAULT: ${{ matrix.DEFAULT }}
         LATEST: ${{ matrix.LATEST }}
     - name: Clean-up
       run: docker logout
