@@ -12,12 +12,11 @@ on:
 
 jobs:
   build:
-    name: 
+    name:
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v1
     - name: Display system info (ubuntu)
-      shell: bash
       run: |
         hostname
         whoami
@@ -28,3 +27,11 @@ jobs:
         pwd
         docker info
         docker version
+    - name: Login to docker registry
+      run: echo "${DOCKERHUB_REGISTRY_PASSWORD}" | docker login -u "${DOCKERHUB_REGISTRY_USER}" --password-stdin
+      env:
+        DOCKERHUB_REGISTRY_USER: ${{ secrets.DOCKERHUB_REGISTRY_USER }}
+        DOCKERHUB_REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_REGISTRY_PASSWORD }}
+    - name: Clean-up
+      run: docker logout
+      if: always()
