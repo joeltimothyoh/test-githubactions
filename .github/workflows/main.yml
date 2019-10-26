@@ -41,10 +41,14 @@ jobs:
       run: |
         echo "BASE_IMAGE_REPO: $BASE_IMAGE_REPO"
         echo "BASE_IMAGE_TAG: $BASE_IMAGE_TAG"
-        echo "BASE_IMAGE: $BASE_IMAGE"
+        BASE_IMAGE="${BASE_IMAGE_REPO}/${BASE_IMAGE_TAG}"
+        echo "BASE_IMAGE: "$BASE_IMAGE"
+
         echo "BUILD_IMAGE_REPO: $BUILD_IMAGE_REPO"
         echo "BUILD_IMAGE_VARIANT: $BUILD_IMAGE_VARIANT"
-        echo "BUILD_IMAGE: $BASE_IMAGE"
+        BUILD_IMAGE="${BUILD_IMAGE_REPO}/${BUILD_IMAGE_VARIANT}"
+        echo "BUILD_IMAGE: $BUILD_IMAGE"
+
         docker pull "$BUILD_IMAGE" || true
         docker build \
           -t "$BUILD_IMAGE" \
@@ -54,10 +58,8 @@ jobs:
       env:
         BASE_IMAGE_REPO: ${{ matrix.BASE_IMAGE_REPO }}
         BASE_IMAGE_TAG: ${{ matrix.BASE_IMAGE_TAG }}
-        BASE_IMAGE: ${{ matrix.BASE_IMAGE_REPO }}/${{ matrix.BASE_IMAGE_TAG }}
         BUILD_IMAGE_REPO: myexampleuser/example1
         BUILD_IMAGE_VARIANT: ${{ matrix.BUILD_IMAGE_VARIANT }}
-        BUILD_IMAGE: ${{ matrix.BUILD_IMAGE_REPO }}/${{ matrix.BUILD_IMAGE_VARIANT }}
         BUILD_CONTEXT: variants/${{ matrix.BUILD_IMAGE_VARIANT }}
     - name: List images
       run: docker images
