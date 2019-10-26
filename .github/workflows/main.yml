@@ -12,12 +12,11 @@ on:
 
 jobs:
   build:
-    name: ${{ matrix.os }}
+    name: 
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v1
     - name: Display system info (ubuntu)
-      if: startsWith(matrix.os, 'ubuntu')
       shell: bash
       run: |
         hostname
