@@ -19,6 +19,9 @@ jobs:
         BASE_IMAGE_REPO: [alpine]
         BASE_IMAGE_TAG: [3.8, 3.9]
         BUILD_IMAGE_VARIANT: [curl, curl-iptables, git, git-ssh, iptables]
+        include:
+          - BUILD_IMAGE_VARIANT: git-ssh
+            LATEST: true
     steps:
     - uses: actions/checkout@v1
     - name: Display system info (ubuntu)
@@ -55,6 +58,9 @@ jobs:
           --cache-from "$BUILD_IMAGE" \
           --build-arg BASE_IMAGE="${BASE_IMAGE}" \
           "$BUILD_CONTEXT"
+        if [ "${LATEST}" = 'true' ]; then
+          docker tag "$BUILD_IMAGE" "${BUILD_IMAGE_REPO}:latest";
+        fi
         docker images
       env:
         BASE_IMAGE_REPO: ${{ matrix.BASE_IMAGE_REPO }}
