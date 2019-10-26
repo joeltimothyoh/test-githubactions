@@ -49,8 +49,8 @@ jobs:
         BUILD_IMAGE="${BUILD_IMAGE_REPO}:${BUILD_IMAGE_VARIANT}"
         echo "BUILD_IMAGE: $BUILD_IMAGE"
 
-        docker pull "$BUILD_IMAGE" || true
-        docker build \
+        time docker pull "$BUILD_IMAGE" || true
+        time docker build \
           -t "$BUILD_IMAGE" \
           --cache-from "$BUILD_IMAGE" \
           --build-arg BASE_IMAGE="${BASE_IMAGE}" \
