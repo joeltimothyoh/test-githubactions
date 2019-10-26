@@ -49,6 +49,7 @@ jobs:
 
         echo "BUILD_IMAGE_REPO: $BUILD_IMAGE_REPO"
         echo "BUILD_IMAGE_VARIANT: $BUILD_IMAGE_VARIANT"
+        echo "LATEST: $LATEST"
         BUILD_IMAGE="${BUILD_IMAGE_REPO}:${BUILD_IMAGE_VARIANT}"
         echo "BUILD_IMAGE: $BUILD_IMAGE"
 
@@ -68,6 +69,7 @@ jobs:
         BUILD_IMAGE_REPO: myexampleuser/example1
         BUILD_IMAGE_VARIANT: ${{ matrix.BUILD_IMAGE_VARIANT }}
         BUILD_CONTEXT: variants/${{ matrix.BUILD_IMAGE_VARIANT }}
+        LATEST: variants/${{ matrix.include.LATEST }}
     - name: Clean-up
       run: docker logout
       if: always()
