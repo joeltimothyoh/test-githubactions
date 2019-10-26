@@ -18,7 +18,7 @@ jobs:
       matrix:
         BASE_IMAGE_REPO: [alpine]
         BASE_IMAGE_TAG: [3.8, 3.9]
-        BUILD_IMAGE_VARIANT: [curl, curl-iptables]
+        BUILD_IMAGE_VARIANT: [curl, curl-iptables, git, git-ssh, iptables]
     steps:
     - uses: actions/checkout@v1
     - name: Display system info (ubuntu)
