@@ -14,6 +14,10 @@ jobs:
   build:
     name:
     runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        DIST: [alpine]
+        DIST_VARIANT: [3.8, 3.9]
     steps:
     - uses: actions/checkout@v1
     - name: Display system info (ubuntu)
@@ -32,6 +36,15 @@ jobs:
       env:
         DOCKERHUB_REGISTRY_USER: ${{ secrets.DOCKERHUB_REGISTRY_USER }}
         DOCKERHUB_REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_REGISTRY_PASSWORD }}
+    - name: Build image
+      run: |
+        BASE_IMAGE="${DIST}/${DIST_VARIANT}"
+        echo "DIST: $DIST"
+        echo "DIST_VARIANT: $DIST_VARIANT"
+        echo "BASE_IMAGE: $BASE_IMAGE"
+      env:
+        DIST: ${{ matrix.DIST }}
+        DIST_VARIANT: ${{ matrix.DIST_VARIANT }}
     - name: Clean-up
       run: docker logout
       if: always()
