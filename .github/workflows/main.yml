@@ -20,7 +20,10 @@ jobs:
         BASE_IMAGE_TAG: [3.8, 3.9]
         BUILD_IMAGE_VARIANT: [curl, curl-iptables, git, git-ssh, iptables]
         include:
-          - BUILD_IMAGE_VARIANT: git-ssh
+          - BASE_IMAGE_TAG: 3.8
+            DEFAULT: true
+          - BASE_IMAGE_TAG: 3.8
+            BUILD_IMAGE_VARIANT: git-ssh
             LATEST: true
     steps:
     - uses: actions/checkout@v1
@@ -49,6 +52,7 @@ jobs:
 
         echo "BUILD_IMAGE_REPO: $BUILD_IMAGE_REPO"
         echo "BUILD_IMAGE_VARIANT: $BUILD_IMAGE_VARIANT"
+        echo "DEFAULT: $DEFAULT"
         echo "LATEST: $LATEST"
         BUILD_IMAGE="${BUILD_IMAGE_REPO}:${BUILD_IMAGE_VARIANT}"
         echo "BUILD_IMAGE: $BUILD_IMAGE"
@@ -59,6 +63,9 @@ jobs:
           --cache-from "$BUILD_IMAGE" \
           --build-arg BASE_IMAGE="${BASE_IMAGE}" \
           "$BUILD_CONTEXT"
+        if [ "${DEFAULT}" = 'true' ]; then
+          docker tag "$BUILD_IMAGE" "${BUILD_IMAGE_REPO}:${BUILD_IMAGE_VARIANT}";
+        fi
         if [ "${LATEST}" = 'true' ]; then
           docker tag "$BUILD_IMAGE" "${BUILD_IMAGE_REPO}:latest";
         fi
