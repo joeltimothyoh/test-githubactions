@@ -55,14 +55,13 @@ jobs:
           --cache-from "$BUILD_IMAGE" \
           --build-arg BASE_IMAGE="${BASE_IMAGE}" \
           "$BUILD_CONTEXT"
+        docker images
       env:
         BASE_IMAGE_REPO: ${{ matrix.BASE_IMAGE_REPO }}
         BASE_IMAGE_TAG: ${{ matrix.BASE_IMAGE_TAG }}
         BUILD_IMAGE_REPO: myexampleuser/example1
         BUILD_IMAGE_VARIANT: ${{ matrix.BUILD_IMAGE_VARIANT }}
         BUILD_CONTEXT: variants/${{ matrix.BUILD_IMAGE_VARIANT }}
-    - name: List images
-      run: docker images
     - name: Clean-up
       run: docker logout
       if: always()
