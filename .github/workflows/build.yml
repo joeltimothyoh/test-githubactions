@@ -33,7 +33,7 @@ jobs:
       BASE_TAG_FULL: ${{ matrix.OS_VARIANT }}
       BUILD_REGISTRY_NAMESPACE: joeltimothyoh
       BUILD_TAG_FULL: ${{ matrix.OS_VARIANT }}-${{ matrix.TOOL_VARIANT }}
-      BUILD_CONTEXT: variants/${{ matrix.OS }}/${{ matrix.TOOL_VARIANT }}
+      BUILD_CONTEXT: variants/${{ matrix.TOOL_VARIANT }}
     steps:
     - uses: actions/checkout@v1
     - name: Display system info (linux)
