@@ -118,6 +118,21 @@ jobs:
         #   TOOL_VARIANT: git-ssh
         #   TAG_TOOL_OS: true
         #   TAG_TOOL: true
+    env:
+      IMAGE_NAME: powershell
+      PS_VERSION: ${{ matrix.PS_VERSION }}
+      OS: ${{ matrix.OS }}
+      OS_VARIANT: ${{ matrix.OS_VARIANT }}
+      TOOL_VARIANT: ${{ matrix.TOOL_VARIANT }}
+      TAG_PS_OS_TOOL: ${{ matrix.TAG_PS_OS_TOOL }}
+      TAG_TOOL_OS: ${{ matrix.TAG_TOOL_OS }}
+      TAG_TOOL: ${{ matrix.TAG_TOOL }}
+      TAG_LATEST: ${{ matrix.TAG_LATEST }}
+      BASE_REGISTRY_NAMESPACE: mcr.microsoft.com
+      BASE_TAG_FULL: ${{ matrix.PS_VERSION }}-${{ matrix.OS }}-${{ matrix.OS_VARIANT }}
+      BUILD_REGISTRY_NAMESPACE: joeltimothyoh
+      BUILD_TAG_FULL: ${{ matrix.PS_VERSION }}-${{ matrix.OS }}-${{ matrix.OS_VARIANT }}-${{ matrix.TOOL_VARIANT }}
+      BUILD_CONTEXT: variants/${{ matrix.TOOL_VARIANT }}/${{ matrix.OS }}
     steps:
     - uses: actions/checkout@v1
     - name: Display system info (ubuntu)
@@ -152,52 +167,32 @@ jobs:
         echo "BUILD_REGISTRY_NAMESPACE: $BUILD_REGISTRY_NAMESPACE"
         echo "BUILD_TAG_FULL: $BUILD_TAG_FULL"
         echo "BUILD_CONTEXT: $BUILD_CONTEXT"
-        BASE_IMAGE_REPO="${BASE_REGISTRY_NAMESPACE}/${IMAGE_NAME}"
-        BASE_IMAGE="${BASE_IMAGE_REPO}:${BASE_TAG_FULL}"
-        BUILD_IMAGE_REPO="${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}"
-        BUILD_IMAGE="${BUILD_IMAGE_REPO}:${BUILD_TAG_FULL}"
-        echo "BASE_IMAGE_REPO: $BASE_IMAGE_REPO"
-        echo "BASE_IMAGE: $BASE_IMAGE"
-        echo "BUILD_IMAGE_REPO: $BUILD_IMAGE_REPO"
-        echo "BUILD_IMAGE: $BUILD_IMAGE"
-        time docker pull "$BUILD_IMAGE" || true
+        echo "BASE_IMAGE: ${BASE_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BASE_TAG_FULL}"
+        echo "BUILD_IMAGE: ${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_TAG_FULL}"
+        time docker pull "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_TAG_FULL}" || true
         time docker build \
-          --cache-from "$BUILD_IMAGE" \
-          -t "$BUILD_IMAGE" \
-          --build-arg BASE_IMAGE="${BASE_IMAGE}" \
+          --cache-from "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_TAG_FULL}" \
+          -t "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_TAG_FULL}" \
+          --build-arg BASE_IMAGE="${BASE_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BASE_TAG_FULL}" \
           "$BUILD_CONTEXT"
         if [ "${TAG_PS_OS_TOOL}" = 'true' ]; then
-          docker tag "$BUILD_IMAGE" "${BUILD_IMAGE_REPO}:${PS_VERSION}-${OS}-${TOOL_VARIANT}";
+          docker tag "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_TAG_FULL}" "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${PS_VERSION}-${OS}-${TOOL_VARIANT}";
         fi
         if [ "${TAG_TOOL_OS}" = 'true' ]; then
-          docker tag "$BUILD_IMAGE" "${BUILD_IMAGE_REPO}:${TOOL_VARIANT}-${OS}";
+          docker tag "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_TAG_FULL}" "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${TOOL_VARIANT}-${OS}";
         fi
         if [ "${TAG_TOOL}" = 'true' ]; then
-          docker tag "$BUILD_IMAGE" "${BUILD_IMAGE_REPO}:${TOOL_VARIANT}";
+          docker tag "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_TAG_FULL}" "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${TOOL_VARIANT}";
         fi
         if [ "${TAG_LATEST}" = 'true' ]; then
-          docker tag "$BUILD_IMAGE" "${BUILD_IMAGE_REPO}:latest";
+          docker tag "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_TAG_FULL}" "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:latest";
         fi
-        docker inspect "$BUILD_IMAGE"
+        docker inspect "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_TAG_FULL}"
         docker images
-      env:
-        IMAGE_NAME: powershell
-        PS_VERSION: ${{ matrix.PS_VERSION }}
-        OS: ${{ matrix.OS }}
-        OS_VARIANT: ${{ matrix.OS_VARIANT }}
-        TOOL_VARIANT: ${{ matrix.TOOL_VARIANT }}
-        TAG_PS_OS_TOOL: ${{ matrix.TAG_PS_OS_TOOL }}
-        TAG_TOOL_OS: ${{ matrix.TAG_TOOL_OS }}
-        TAG_TOOL: ${{ matrix.TAG_TOOL }}
-        TAG_LATEST: ${{ matrix.TAG_LATEST }}
-        BASE_REGISTRY_NAMESPACE: mcr.microsoft.com
-        BASE_TAG_FULL: ${{ matrix.PS_VERSION }}-${{ matrix.OS }}-${{ matrix.OS_VARIANT }}
-        BUILD_REGISTRY_NAMESPACE: joeltimothyoh
-        BUILD_TAG_FULL: ${{ matrix.PS_VERSION }}-${{ matrix.OS }}-${{ matrix.OS_VARIANT }}-${{ matrix.TOOL_VARIANT }}
-        BUILD_CONTEXT: variants/${{ matrix.TOOL_VARIANT }}/${{ matrix.OS }}
     - name: Push image
       if: startsWith(github.ref, 'refs/tags/')
-      run: echo Pushing image..
+      run: |
+        echo Pushing image "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}"
     - name: Clean-up
       run: docker logout
       if: always()
