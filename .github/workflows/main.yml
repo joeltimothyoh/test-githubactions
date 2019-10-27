@@ -10,8 +10,7 @@ on:
     branches:
     - '**'
 
-jobs:
-
+# jobs:
   # build1:
   #   runs-on: ubuntu-18.04
   #   strategy:
@@ -99,6 +98,7 @@ env:
   BUILD_TAG_FULL: ${{ matrix.PS_VERSION }}-${{ matrix.OS }}-${{ matrix.OS_VARIANT }}-${{ matrix.TOOL_VARIANT }}
   BUILD_CONTEXT: variants/${{ matrix.TOOL_VARIANT }}/${{ matrix.OS }}
 
+jobs:
   build2:
     runs-on: ubuntu-18.04
     strategy:
