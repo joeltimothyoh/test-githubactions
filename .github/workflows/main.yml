@@ -120,10 +120,6 @@ jobs:
           TOOL_VARIANT: git-ssh
           TAG_TOOL_OS: true
           TAG_TOOL: true
-        - PS_VERSION: 6.2.0
-          OS: alpine
-          TOOL_VARIANT: git-ssh
-          TAG_TOOL: true
     steps:
     - uses: actions/checkout@v1
     - name: Display system info (ubuntu)
