@@ -87,7 +87,6 @@ jobs:
     runs-on: ubuntu-18.04
     strategy:
       matrix:
-        # IMAGE_NAME: [powershell]
         # PS_VERSION: [6.2.0, 6.1.3, 6.1.0]
         # OS: [ubuntu]
         # OS_VARIANT: [18.04]
@@ -104,7 +103,6 @@ jobs:
         #   TAG_TOOL_OS: true
         #   TAG_TOOL: true
         #   TAG_LATEST: true
-        IMAGE_NAME: [powershell]
         PS_VERSION: [6.2.0, 6.1.3, 6.1.0]
         OS: [alpine]
         OS_VARIANT: [3.8]
@@ -187,7 +185,7 @@ jobs:
         docker inspect "$BUILD_IMAGE"
         docker images
       env:
-        IMAGE_NAME: ${{ matrix.IMAGE_NAME }}
+        IMAGE_NAME: powershell
         PS_VERSION: ${{ matrix.PS_VERSION }}
         OS: ${{ matrix.OS }}
         OS_VARIANT: ${{ matrix.OS_VARIANT }}
