@@ -195,6 +195,9 @@ jobs:
         BUILD_REGISTRY_NAMESPACE: joeltimothyoh
         BUILD_TAG_FULL: ${{ matrix.PS_VERSION }}-${{ matrix.OS }}-${{ matrix.OS_VARIANT }}-${{ matrix.TOOL_VARIANT }}
         BUILD_CONTEXT: variants/${{ matrix.TOOL_VARIANT }}/${{ matrix.OS }}
+    - name: Push image
+      if: startsWith(github.ref, 'refs/tags/')
+      run: echo Pushing image..
     - name: Clean-up
       run: docker logout
       if: always()
