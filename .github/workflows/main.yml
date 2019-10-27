@@ -167,7 +167,7 @@ jobs:
 
         BASE_REGISTRY_NAMESPACE: mcr.microsoft.com
         TAG_FULL: ${{ matrix.PS_VERSION }}-${{ matrix.OS }}-${{ matrix.OS_VARIANT }}-${{ matrix.TOOL_VARIANT }}
-        BUILD_REGISTRY_NAMESPACE: myexampleuser
+        BUILD_REGISTRY_NAMESPACE: joeltimothyoh
         BUILD_CONTEXT: variants/${{ matrix.TOOL_VARIANT }}/${{ matrix.OS }}
     - name: Clean-up
       run: docker logout
