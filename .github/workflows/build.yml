@@ -1,4 +1,4 @@
-name: CI
+name: build
 
 on:
   push:
@@ -11,23 +11,34 @@ on:
     - '**'
 
 jobs:
-  build:
+  alpine:
     runs-on: ubuntu-18.04
     strategy:
       matrix:
-        BASE_IMAGE_REPO: [alpine]
-        BASE_IMAGE_TAG: [3.8, 3.9]
-        BUILD_IMAGE_VARIANT: [curl, curl-iptables, git, git-ssh, iptables]
+        OS_VARIANT: [3.8]
+        TOOL_VARIANT: [curl, curl-iptables, git, git-ssh, iptables]
         include:
-          - BASE_IMAGE_TAG: 3.8
-            DEFAULT: true
-          - BASE_IMAGE_TAG: 3.8
-            BUILD_IMAGE_VARIANT: git-ssh
-            LATEST: true
+        - OS_VARIANT: 3.8
+          TAG_TOOL: true
+        - OS_VARIANT: 3.8
+          TOOL_VARIANT: git-ssh
+          TAG_LATEST: true
+    env:
+      IMAGE_NAME: alpine
+      OS_VARIANT: ${{ matrix.OS_VARIANT }}
+      TOOL_VARIANT: ${{ matrix.TOOL_VARIANT }}
+      TAG_TOOL: ${{ matrix.TAG_TOOL }}
+      TAG_LATEST: ${{ matrix.TAG_LATEST }}
+      BASE_REGISTRY_NAMESPACE: docker.io
+      BASE_TAG_FULL: ${{ matrix.OS_VARIANT }}
+      BUILD_REGISTRY_NAMESPACE: joeltimothyoh
+      BUILD_TAG_FULL: ${{ matrix.OS_VARIANT }}-${{ matrix.TOOL_VARIANT }}
+      BUILD_CONTEXT: variants/${{ matrix.OS }}/${{ matrix.TOOL_VARIANT }}
     steps:
     - uses: actions/checkout@v1
-    - name: Display system info (ubuntu)
+    - name: Display system info (linux)
       run: |
+        set -e
         hostname
         whoami
         cat /etc/*release
@@ -40,44 +51,41 @@ jobs:
     - name: Login to docker registry
       run: echo "${DOCKERHUB_REGISTRY_PASSWORD}" | docker login -u "${DOCKERHUB_REGISTRY_USER}" --password-stdin
       env:
-        DOCKERHUB_REGISTRY_USER: ${{ secrets.DOCKERHUB_REGISTRY_USER }}
+        DOCKERHUB_REGISTRY_USER: joeltimothyoh
         DOCKERHUB_REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_REGISTRY_PASSWORD }}
     - name: Build image
       run: |
-        echo "BASE_IMAGE_REPO: $BASE_IMAGE_REPO"
-        echo "BASE_IMAGE_TAG: $BASE_IMAGE_TAG"
-        BASE_IMAGE="${BASE_IMAGE_REPO}:${BASE_IMAGE_TAG}"
-        echo "BASE_IMAGE: $BASE_IMAGE"
-
-        echo "BUILD_IMAGE_REPO: $BUILD_IMAGE_REPO"
-        echo "BUILD_IMAGE_VARIANT: $BUILD_IMAGE_VARIANT"
-        echo "DEFAULT: $DEFAULT"
-        echo "LATEST: $LATEST"
-        BUILD_IMAGE="${BUILD_IMAGE_REPO}:${BUILD_IMAGE_VARIANT}"
-        echo "BUILD_IMAGE: $BUILD_IMAGE"
-
-        time docker pull "$BUILD_IMAGE" || true
+        set -e
+        echo "IMAGE_NAME: $IMAGE_NAME"
+        echo "OS_VARIANT: $OS_VARIANT"
+        echo "TOOL_VARIANT: $TOOL_VARIANT"
+        echo "TAG_TOOL: $TAG_TOOL"
+        echo "TAG_LATEST: $TAG_LATEST"
+        echo "BASE_REGISTRY_NAMESPACE: $BASE_REGISTRY_NAMESPACE"
+        echo "BASE_TAG_FULL: $BASE_TAG_FULL"
+        echo "BUILD_REGISTRY_NAMESPACE: $BUILD_REGISTRY_NAMESPACE"
+        echo "BUILD_TAG_FULL: $BUILD_TAG_FULL"
+        echo "BUILD_CONTEXT: $BUILD_CONTEXT"
+        echo "BASE_IMAGE: ${BASE_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BASE_TAG_FULL}"
+        echo "BUILD_IMAGE: ${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_TAG_FULL}"
+        time docker pull "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_TAG_FULL}" || true
         time docker build \
-          -t "$BUILD_IMAGE" \
-          --cache-from "$BUILD_IMAGE" \
-          --build-arg BASE_IMAGE="${BASE_IMAGE}" \
-          "$BUILD_CONTEXT"
-        if [ "${DEFAULT}" = 'true' ]; then
-          docker tag "$BUILD_IMAGE" "${BUILD_IMAGE_REPO}:${BUILD_IMAGE_VARIANT}";
+            --cache-from "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_TAG_FULL}" \
+            -t "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_TAG_FULL}" \
+            --build-arg BASE_IMAGE="${BASE_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BASE_TAG_FULL}" \
+            "$BUILD_CONTEXT"
+        if [ "${TAG_TOOL}" = 'true' ]; then
+            docker tag "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_TAG_FULL}" "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${TOOL_VARIANT}"
         fi
-        if [ "${LATEST}" = 'true' ]; then
-          docker tag "$BUILD_IMAGE" "${BUILD_IMAGE_REPO}:latest";
+        if [ "${TAG_LATEST}" = 'true' ]; then
+            docker tag "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_TAG_FULL}" "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:latest"
         fi
-        docker inspect "$BUILD_IMAGE"
         docker images
-      env:
-        BASE_IMAGE_REPO: ${{ matrix.BASE_IMAGE_REPO }}
-        BASE_IMAGE_TAG: ${{ matrix.BASE_IMAGE_TAG }}
-        BUILD_IMAGE_REPO: myexampleuser/example1
-        BUILD_IMAGE_VARIANT: ${{ matrix.BUILD_IMAGE_VARIANT }}
-        BUILD_CONTEXT: variants/${{ matrix.BUILD_IMAGE_VARIANT }}
-        DEFAULT: ${{ matrix.DEFAULT }}
-        LATEST: ${{ matrix.LATEST }}
+        docker inspect "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_TAG_FULL}"
+    - name: Push image
+      if: startsWith(github.ref, 'refs/tags/')
+      run: |
+        docker push "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}"
     - name: Clean-up
       run: docker logout
       if: always()
