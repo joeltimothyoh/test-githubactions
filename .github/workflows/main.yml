@@ -171,10 +171,10 @@ jobs:
         echo "BUILD_IMAGE: ${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_TAG_FULL}"
         time docker pull "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_TAG_FULL}" || true
         time docker build \
-          --cache-from "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_TAG_FULL}" \
-          -t "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_TAG_FULL}" \
-          --build-arg BASE_IMAGE="${BASE_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BASE_TAG_FULL}" \
-          "$BUILD_CONTEXT"
+            --cache-from "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_TAG_FULL}" \
+            -t "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_TAG_FULL}" \
+            --build-arg BASE_IMAGE="${BASE_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BASE_TAG_FULL}" \
+            "$BUILD_CONTEXT"
         if [ "${TAG_PS_OS_TOOL}" = 'true' ]; then
           docker tag "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_TAG_FULL}" "${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}:${PS_VERSION}-${OS}-${TOOL_VARIANT}";
         fi
