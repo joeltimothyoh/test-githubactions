@@ -69,6 +69,7 @@ jobs:
         if [ "${LATEST}" = 'true' ]; then
           docker tag "$BUILD_IMAGE" "${BUILD_IMAGE_REPO}:latest";
         fi
+        docker inspect "$BUILD_IMAGE"
         docker images
       env:
         BASE_IMAGE_REPO: ${{ matrix.BASE_IMAGE_REPO }}
