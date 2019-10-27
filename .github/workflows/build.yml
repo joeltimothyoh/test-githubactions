@@ -29,7 +29,7 @@ jobs:
       TOOL_VARIANT: ${{ matrix.TOOL_VARIANT }}
       TAG_TOOL: ${{ matrix.TAG_TOOL }}
       TAG_LATEST: ${{ matrix.TAG_LATEST }}
-      BASE_REGISTRY_NAMESPACE: docker.io
+      BASE_REGISTRY_NAMESPACE: library
       BASE_TAG_FULL: ${{ matrix.OS_VARIANT }}
       BUILD_REGISTRY_NAMESPACE: joeltimothyoh
       BUILD_TAG_FULL: ${{ matrix.OS_VARIANT }}-${{ matrix.TOOL_VARIANT }}
