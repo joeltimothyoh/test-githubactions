@@ -96,14 +96,14 @@ jobs:
         # - PS_VERSION: 6.2.0
         #   OS: ubuntu
         #   OS_VARIANT: 18.04
-        #   PS_OS_TOOL_DEFAULT: true
+        #   TAG_PS_OS_TOOL: true
         # - PS_VERSION: 6.2.0
         #   OS: ubuntu
         #   OS_VARIANT: 18.04
         #   TOOL_VARIANT: git
-        #   TOOL_OS_DEFAULT: true
-        #   TOOL_DEFAULT: true
-        #   LATEST: true
+        #   TAG_TOOL_OS: true
+        #   TAG_TOOL: true
+        #   TAG_LATEST: true
         IMAGE_NAME: [powershell]
         PS_VERSION: [6.2.0, 6.1.3, 6.1.0]
         OS: [alpine]
@@ -113,17 +113,17 @@ jobs:
         - PS_VERSION: 6.2.0
           OS: alpine
           OS_VARIANT: 3.8
-          PS_OS_TOOL_DEFAULT: true
+          TAG_PS_OS_TOOL: true
         - PS_VERSION: 6.2.0
           OS: alpine
           OS_VARIANT: 3.8
           TOOL_VARIANT: git-ssh
-          TOOL_OS_DEFAULT: true
-          TOOL_DEFAULT: true
+          TAG_TOOL_OS: true
+          TAG_TOOL: true
         - PS_VERSION: 6.2.0
           OS: alpine
           TOOL_VARIANT: git-ssh
-          TOOL_DEFAULT: true
+          TAG_TOOL: true
     steps:
     - uses: actions/checkout@v1
     - name: Display system info (ubuntu)
@@ -149,10 +149,10 @@ jobs:
         echo "OS: $OS"
         echo "OS_VARIANT: $OS_VARIANT"
         echo "TOOL_VARIANT: $TOOL_VARIANT"
-        echo "PS_OS_TOOL_DEFAULT: $PS_OS_TOOL_DEFAULT"
-        echo "TOOL_OS_DEFAULT: $TOOL_OS_DEFAULT"
-        echo "TOOL_DEFAULT: $TOOL_DEFAULT"
-        echo "LATEST: $LATEST"
+        echo "TAG_PS_OS_TOOL: $TAG_PS_OS_TOOL"
+        echo "TAG_TOOL_OS: $TAG_TOOL_OS"
+        echo "TAG_TOOL: $TAG_TOOL"
+        echo "TAG_LATEST: $TAG_LATEST"
 
         echo "BASE_REGISTRY_NAMESPACE: $BASE_REGISTRY_NAMESPACE"
         echo "BASE_TAG_FULL: $BASE_TAG_FULL"
@@ -176,16 +176,16 @@ jobs:
           -t "$BUILD_IMAGE" \
           --build-arg BASE_IMAGE="${BASE_IMAGE}" \
           "$BUILD_CONTEXT"
-        if [ "${PS_OS_TOOL_DEFAULT}" = 'true' ]; then
+        if [ "${TAG_PS_OS_TOOL}" = 'true' ]; then
           docker tag "$BUILD_IMAGE" "${BUILD_IMAGE_REPO}:${PS_VERSION}-${OS}-${TOOL_VARIANT}";
         fi
-        if [ "${TOOL_OS_DEFAULT}" = 'true' ]; then
+        if [ "${TAG_TOOL_OS}" = 'true' ]; then
           docker tag "$BUILD_IMAGE" "${BUILD_IMAGE_REPO}:${TOOL_VARIANT}-${OS}";
         fi
-        if [ "${TOOL_DEFAULT}" = 'true' ]; then
+        if [ "${TAG_TOOL}" = 'true' ]; then
           docker tag "$BUILD_IMAGE" "${BUILD_IMAGE_REPO}:${TOOL_VARIANT}";
         fi
-        if [ "${LATEST}" = 'true' ]; then
+        if [ "${TAG_LATEST}" = 'true' ]; then
           docker tag "$BUILD_IMAGE" "${BUILD_IMAGE_REPO}:latest";
         fi
         docker inspect "$BUILD_IMAGE"
@@ -196,10 +196,10 @@ jobs:
         OS: ${{ matrix.OS }}
         OS_VARIANT: ${{ matrix.OS_VARIANT }}
         TOOL_VARIANT: ${{ matrix.TOOL_VARIANT }}
-        PS_OS_TOOL_DEFAULT: ${{ matrix.PS_OS_TOOL_DEFAULT }}
-        TOOL_OS_DEFAULT: ${{ matrix.TOOL_OS_DEFAULT }}
-        TOOL_DEFAULT: ${{ matrix.TOOL_DEFAULT }}
-        LATEST: ${{ matrix.LATEST }}
+        TAG_PS_OS_TOOL: ${{ matrix.TAG_PS_OS_TOOL }}
+        TAG_TOOL_OS: ${{ matrix.TAG_TOOL_OS }}
+        TAG_TOOL: ${{ matrix.TAG_TOOL }}
+        TAG_LATEST: ${{ matrix.TAG_LATEST }}
 
         BASE_REGISTRY_NAMESPACE: mcr.microsoft.com
         BASE_TAG_FULL: ${{ matrix.PS_VERSION }}-${{ matrix.OS }}-${{ matrix.OS_VARIANT }}
