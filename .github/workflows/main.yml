@@ -154,6 +154,26 @@ jobs:
         echo "BASE_IMAGE: $BASE_IMAGE"
         echo "BUILD_IMAGE_REPO: $BUILD_IMAGE_REPO"
         echo "BUILD_IMAGE: $BUILD_IMAGE"
+
+        time docker pull "$BUILD_IMAGE" || true
+        time docker build \
+          --cache-from "$BUILD_IMAGE" \
+          -t "$BUILD_IMAGE" \
+          --build-arg BASE_IMAGE="${BASE_IMAGE}" \
+          "$BUILD_CONTEXT"
+        if [ "${PS_OS_TOOL_DEFAULT}" = 'true' ]; then
+          docker tag "$BUILD_IMAGE" "${BUILD_IMAGE_REPO}:${PS_VERSION}-${OS}-${TOOL_VARIANT}";
+        fi
+        if [ "${TOOL_OS_DEFAULT}" = 'true' ]; then
+          docker tag "$BUILD_IMAGE" "${BUILD_IMAGE_REPO}:${TOOL_VARIANT}-${OS}";
+        fi
+        if [ "${TOOL_DEFAULT}" = 'true' ]; then
+          docker tag "$BUILD_IMAGE" "${BUILD_IMAGE_REPO}:${TOOL_VARIANT}";
+        fi
+        if [ "${LATEST}" = 'true' ]; then
+          docker tag "$BUILD_IMAGE" "${BUILD_IMAGE_REPO}:latest";
+        fi
+        docker images
       env:
         IMAGE_NAME: ${{ matrix.IMAGE_NAME }}
         PS_VERSION: ${{ matrix.PS_VERSION }}
