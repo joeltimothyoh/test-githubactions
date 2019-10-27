@@ -134,21 +134,21 @@ jobs:
         echo "OS: $OS"
         echo "OS_VARIANT: $OS_VARIANT"
         echo "TOOL_VARIANT: $TOOL_VARIANT"
-        echo "TAG_FULL: $TAG_FULL"
         echo "PS_OS_TOOL_DEFAULT: $PS_OS_TOOL_DEFAULT"
         echo "TOOL_OS_DEFAULT: $TOOL_OS_DEFAULT"
         echo "TOOL_DEFAULT: $TOOL_DEFAULT"
         echo "LATEST: $LATEST"
 
         echo "BASE_REGISTRY_NAMESPACE: $BASE_REGISTRY_NAMESPACE"
-        echo "TAG_FULL: $TAG_FULL"
+        echo "BASE_TAG_FULL: $BASE_TAG_FULL"
         echo "BUILD_REGISTRY_NAMESPACE: $BUILD_REGISTRY_NAMESPACE"
+        echo "BUILD_TAG_FULL: $BUILD_TAG_FULL"
         echo "BUILD_CONTEXT: $BUILD_CONTEXT"
 
         BASE_IMAGE_REPO="${BASE_REGISTRY_NAMESPACE}/${IMAGE_NAME}"
-        BASE_IMAGE="${BASE_IMAGE_REPO}:${TAG_FULL}"
+        BASE_IMAGE="${BASE_IMAGE_REPO}:${BASE_TAG_FULL}"
         BUILD_IMAGE_REPO="${BUILD_REGISTRY_NAMESPACE}/${IMAGE_NAME}"
-        BUILD_IMAGE="${BUILD_IMAGE_REPO}:${TAG_FULL}"
+        BUILD_IMAGE="${BUILD_IMAGE_REPO}:${BUILD_TAG_FULL}"
 
         echo "BASE_IMAGE_REPO: $BASE_IMAGE_REPO"
         echo "BASE_IMAGE: $BASE_IMAGE"
@@ -186,8 +186,9 @@ jobs:
         LATEST: ${{ matrix.LATEST }}
 
         BASE_REGISTRY_NAMESPACE: mcr.microsoft.com
-        TAG_FULL: ${{ matrix.PS_VERSION }}-${{ matrix.OS }}-${{ matrix.OS_VARIANT }}-${{ matrix.TOOL_VARIANT }}
+        BASE_TAG_FULL: ${{ matrix.PS_VERSION }}-${{ matrix.OS }}-${{ matrix.OS_VARIANT }}
         BUILD_REGISTRY_NAMESPACE: joeltimothyoh
+        BUILD_TAG_FULL: ${{ matrix.PS_VERSION }}-${{ matrix.OS }}-${{ matrix.OS_VARIANT }}-${{ matrix.TOOL_VARIANT }}
         BUILD_CONTEXT: variants/${{ matrix.TOOL_VARIANT }}/${{ matrix.OS }}
     - name: Clean-up
       run: docker logout
