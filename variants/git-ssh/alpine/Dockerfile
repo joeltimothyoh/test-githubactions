@@ -5,4 +5,4 @@ RUN apk add --no-cache \
         git \
         openssh
 
-CMD ["/bin/sh"]
+CMD ["pwsh"]
