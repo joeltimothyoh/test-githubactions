@@ -12,7 +12,6 @@ on:
 
 jobs:
   build:
-    name:
     runs-on: ubuntu-18.04
     strategy:
       matrix:
