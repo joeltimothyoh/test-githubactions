@@ -136,7 +136,7 @@ jobs:
         DOCKERHUB_REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_REGISTRY_PASSWORD }}
     - name: Build image
       run: |
-        set -e
+        set -eu
         echo "IMAGE_NAME: $IMAGE_NAME"
         echo "PS_VERSION: $PS_VERSION"
         echo "OS: $OS"
@@ -234,7 +234,7 @@ jobs:
         DOCKERHUB_REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_REGISTRY_PASSWORD }}
     - name: Build image
       run: |
-        set -e
+        set -eu
         echo "IMAGE_NAME: $IMAGE_NAME"
         echo "PS_VERSION: $PS_VERSION"
         echo "OS: $OS"
