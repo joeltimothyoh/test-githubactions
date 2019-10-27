@@ -82,22 +82,6 @@ on:
   #     run: docker logout
   #     if: always()
 
-env:
-  IMAGE_NAME: powershell
-  PS_VERSION: ${{ matrix.PS_VERSION }}
-  OS: ${{ matrix.OS }}
-  OS_VARIANT: ${{ matrix.OS_VARIANT }}
-  TOOL_VARIANT: ${{ matrix.TOOL_VARIANT }}
-  TAG_PS_OS_TOOL: ${{ matrix.TAG_PS_OS_TOOL }}
-  TAG_TOOL_OS: ${{ matrix.TAG_TOOL_OS }}
-  TAG_TOOL: ${{ matrix.TAG_TOOL }}
-  TAG_LATEST: ${{ matrix.TAG_LATEST }}
-  BASE_REGISTRY_NAMESPACE: mcr.microsoft.com
-  BASE_TAG_FULL: ${{ matrix.PS_VERSION }}-${{ matrix.OS }}-${{ matrix.OS_VARIANT }}
-  BUILD_REGISTRY_NAMESPACE: joeltimothyoh
-  BUILD_TAG_FULL: ${{ matrix.PS_VERSION }}-${{ matrix.OS }}-${{ matrix.OS_VARIANT }}-${{ matrix.TOOL_VARIANT }}
-  BUILD_CONTEXT: variants/${{ matrix.TOOL_VARIANT }}/${{ matrix.OS }}
-
 jobs:
   build2:
     runs-on: ubuntu-18.04
@@ -134,6 +118,21 @@ jobs:
           TOOL_VARIANT: git-ssh
           TAG_TOOL_OS: true
           TAG_TOOL: true
+    env:
+      IMAGE_NAME: powershell
+      PS_VERSION: ${{ matrix.PS_VERSION }}
+      OS: ${{ matrix.OS }}
+      OS_VARIANT: ${{ matrix.OS_VARIANT }}
+      TOOL_VARIANT: ${{ matrix.TOOL_VARIANT }}
+      TAG_PS_OS_TOOL: ${{ matrix.TAG_PS_OS_TOOL }}
+      TAG_TOOL_OS: ${{ matrix.TAG_TOOL_OS }}
+      TAG_TOOL: ${{ matrix.TAG_TOOL }}
+      TAG_LATEST: ${{ matrix.TAG_LATEST }}
+      BASE_REGISTRY_NAMESPACE: mcr.microsoft.com
+      BASE_TAG_FULL: ${{ matrix.PS_VERSION }}-${{ matrix.OS }}-${{ matrix.OS_VARIANT }}
+      BUILD_REGISTRY_NAMESPACE: joeltimothyoh
+      BUILD_TAG_FULL: ${{ matrix.PS_VERSION }}-${{ matrix.OS }}-${{ matrix.OS_VARIANT }}-${{ matrix.TOOL_VARIANT }}
+      BUILD_CONTEXT: variants/${{ matrix.TOOL_VARIANT }}/${{ matrix.OS }}
     steps:
     - uses: actions/checkout@v1
     - name: Display system info (linux)
