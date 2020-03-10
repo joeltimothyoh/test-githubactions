@@ -3,12 +3,12 @@ name: test-githubactions
 on:
   push:
     branches:
-    - '*'
+    - '**'
     tags:
-    - '*'
+    - '**'
   pull_request:
     branches:
-    - '*'
+    - '**'
 
 jobs:
 
