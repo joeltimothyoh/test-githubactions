@@ -53,6 +53,9 @@ jobs:
       shell: powershell
       run: |
         $PSVersionTable
+    - name: Step (refs/heads/ || refs/tags/)
+      if: startsWith(github.ref, 'refs/heads/') || startsWith(github.ref, 'refs/tags/')
+      run: echo Running
 
   linux:
     name: ${{ matrix.os }}
@@ -87,6 +90,9 @@ jobs:
         sudo -u root whoami
         sudo apt-get update
         sudo touch /usr/local/hi
+    - name: Step (refs/heads/ || refs/tags/)
+      if: startsWith(github.ref, 'refs/heads/') || startsWith(github.ref, 'refs/tags/')
+      run: echo Running
 
   linux_container:
     name: ${{ matrix.os }} [container] ${{ matrix.containerImage }}
@@ -132,6 +138,9 @@ jobs:
         sudo -u root whoami
         sudo apt-get update
         sudo touch /usr/local/hi
+    - name: Step (refs/heads/ || refs/tags/)
+      if: startsWith(github.ref, 'refs/heads/') || startsWith(github.ref, 'refs/tags/')
+      run: echo Running
 
   macos:
     name: ${{ matrix.os }}
@@ -160,3 +169,6 @@ jobs:
         top -l 1 -s 0 | grep PhysMem
         df -h
         pwd
+    - name: Step (refs/heads/ || refs/tags/)
+      if: startsWith(github.ref, 'refs/heads/') || startsWith(github.ref, 'refs/tags/')
+      run: echo Running
