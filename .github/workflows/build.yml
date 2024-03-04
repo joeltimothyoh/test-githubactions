@@ -18,7 +18,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-2019, windows-2016]
+        os: [windows-2022, windows-2019]
     env:
       job_var1: value1
       job_var2: value2
@@ -63,7 +63,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-18.04, ubuntu-16.04]
+        os: [ubuntu-22.04, ubuntu-20.04]
     steps:
     - uses: actions/checkout@v1
       with:
@@ -97,7 +97,7 @@ jobs:
   linux_container:
     name: ${{ matrix.os }} [container] ${{ matrix.containerImage }}
     needs: []
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         containerImage:
@@ -148,7 +148,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macOS-10.14]
+        os: [macos-13]
     env:
       job_var1: value1
       job_var2: value2
