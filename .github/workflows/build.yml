@@ -101,6 +101,8 @@ jobs:
     strategy:
       matrix:
         containerImage:
+        - joeltimothyoh/powershell:7.4.1-ubuntu-22.04-git-sudo
+        - joeltimothyoh/powershell:7.3.9-ubuntu-22.04-git-sudo
         - joeltimothyoh/powershell:6.2.0-ubuntu-18.04-git-sudo
         - joeltimothyoh/powershell:6.1.0-ubuntu-18.04-git-sudo
     container:
