@@ -9,8 +9,6 @@ on:
   pull_request:
     branches:
     - '**'
-env:
-  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
 jobs:
 
@@ -24,6 +22,8 @@ jobs:
       run: |
         apt-get update && apt-get install -y wget
     - uses: actions/setup-dotnet@v3
+      env:
+        ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
       with:
         dotnet-version: '6'
     - name: Powershell version
